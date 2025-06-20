@@ -5,4 +5,6 @@ export function CloseBrowser():Promise<void>;
 
 export function CloseSession():Promise<void>;
 
+export function GotoTarget(arg1:string):Promise<void>;
+
 export function OpenBrowser(arg1:string):Promise<void>;

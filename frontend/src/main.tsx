@@ -21,11 +21,7 @@ root.render(
       <HashRouter>
         <Routes>
           <Route element={<Dashboard />}>
-            <Route index element={<div></div>} />
-            <Route path="/accounts"  >
-              <Route index element={<AccountHome /> } />
-              <Route path=":uid" element={<Account />} />
-            </Route>
+            <Route index element={<Account />} />
             <Route path="/messages" element={<Message />} />
             <Route path="/uploads" element={<Upload />} />
             <Route path="/setting" element={<Setting />} />

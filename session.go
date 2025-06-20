@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"
 )
 
@@ -43,7 +44,6 @@ func (c *Session) initAllocatorCtx(dataDir string, opts ...chromedp.ExecAllocato
 }
 
 func (c *Session) OpenBrowser(url string) error {
-	// create context
 	if c.allocCtx == nil {
 		return fmt.Errorf("allocator context is not initialized")
 	}
@@ -52,21 +52,35 @@ func (c *Session) OpenBrowser(url string) error {
 		c.ctx, c.cancelFunc = chromedp.NewContext(c.allocCtx)
 	}
 
-	// run task list
-	if err := chromedp.Run(c.ctx,
-		chromedp.Navigate(url),
-	); err != nil {
-		return fmt.Errorf("Failed getting body of %s: %v", LoginFormUrl, err)
+	chromedp.ListenBrowser(c.ctx, func(ev interface{}) {
+		chromedp.Run(c.ctx, c.whenBrowserOpen())
+	})
+
+	if err := chromedp.Run(c.ctx, chromedp.Navigate(url)); err != nil {
+		return fmt.Errorf("failed to navigate to %s: %w", url, err)
 	}
 
 	return nil
 }
 
 func (c *Session) CloseBrowser() error {
-	c.cancelFunc() // Cancel the allocator context
-	c.ctx = nil
+	if c.ctx != nil {
+		c.cancelFunc() // Cancel the allocator context
+		c.ctx = nil
+	}
 
 	return nil
+}
+
+func (c *Session) GotoTarget(url string) error {
+	if c.ctx == nil {
+		c.ctx, c.cancelFunc = chromedp.NewContext(c.allocCtx)
+		chromedp.ListenBrowser(c.ctx, func(ev interface{}) {
+			chromedp.Run(c.ctx, c.whenBrowserOpen())
+		})
+	}
+
+	return chromedp.Run(c.ctx, chromedp.Navigate(url))
 }
 
 func (c *Session) CloseSession() error {
@@ -74,4 +88,32 @@ func (c *Session) CloseSession() error {
 	c.allocCtx = nil
 
 	return nil
+}
+
+func (c *Session) whenBrowserOpen() chromedp.ActionFunc {
+	return chromedp.ActionFunc(func(ctx context.Context) error {
+		chromedp.ListenBrowser(c.ctx, func(ev interface{}) {
+			var userNameNode []*cdp.Node
+			if err := chromedp.Nodes(`.user-info .name-box`, &userNameNode, chromedp.ByQuery).Do(ctx); err != nil {
+				return
+			}
+			if len(userNameNode) == 0 {
+				return
+			}
+			c.Name = userNameNode[0].NodeValue // Set the user name from the node value
+
+			var iconNode []*cdp.Node
+			if err := chromedp.Nodes(`.user-info img:first`, &iconNode, chromedp.ByQuery).Do(ctx); err != nil {
+				return
+			}
+
+			if len(iconNode) == 0 {
+				return
+			}
+			c.Icon = iconNode[0].AttributeValue("src") // Set the icon URL from the node attribute
+			c.Signed = true                            // Mark the session as signed in
+		})
+
+		return nil
+	})
 }

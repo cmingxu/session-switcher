@@ -12,6 +12,8 @@ export function GetSession(arg1:string):Promise<main.Session>;
 
 export function GetSessions():Promise<Array<main.Session>>;
 
+export function GotoTarget(arg1:string,arg2:string):Promise<void>;
+
 export function Greet(arg1:string):Promise<string>;
 
 export function OpenBrowser(arg1:string,arg2:string):Promise<void>;

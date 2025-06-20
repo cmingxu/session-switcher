@@ -3,6 +3,7 @@ module session-switcher
 go 1.23
 
 require (
+	github.com/chromedp/cdproto v0.0.0-20250615221225-2454e98bdb89
 	github.com/chromedp/chromedp v0.13.6
 	github.com/google/uuid v1.6.0
 	github.com/rs/zerolog v1.34.0
@@ -12,7 +13,6 @@ require (
 
 require (
 	github.com/bep/debounce v1.2.1 // indirect
-	github.com/chromedp/cdproto v0.0.0-20250615221225-2454e98bdb89 // indirect
 	github.com/chromedp/sysutil v1.1.0 // indirect
 	github.com/go-json-experiment/json v0.0.0-20250211171154-1ae217ad3535 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect

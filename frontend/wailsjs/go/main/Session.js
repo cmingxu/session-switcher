@@ -10,6 +10,10 @@ export function CloseSession() {
   return window['go']['main']['Session']['CloseSession']();
 }
 
+export function GotoTarget(arg1) {
+  return window['go']['main']['Session']['GotoTarget'](arg1);
+}
+
 export function OpenBrowser(arg1) {
   return window['go']['main']['Session']['OpenBrowser'](arg1);
 }

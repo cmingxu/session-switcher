@@ -5,7 +5,6 @@ import { ArchiveX, Command, File, Inbox, Send, Trash2 } from "lucide-react"
 import { useLocation } from "react-router"
 import { CreateSession, GetSessions } from "../../wailsjs/go/main/App"
 
-import { Link } from "react-router"
 import { NavUser } from "@/components/nav-user"
 import { Label } from "@/components/ui/label"
 import {
@@ -151,23 +150,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarInput placeholder="搜索..." />
           </SidebarHeader>
           <SidebarContent>
-            <SidebarGroup className="px-0">
+            <SidebarGroup className="px-4">
               <SidebarGroupContent>
                 <Button className="justify-center text-sm cursor-pointer w-full" 
                   variant="outline"
-                  disabled={!!currentSession}
                   onClick={ createNewSession }>
                   新账号 <CirclePlus className="mr-2 size-4" />
                 </Button>
 
-                {sessions.map((sess) => ( <Link to={`/accounts/${sess.uid}`} key={sess.uid} 
+                {sessions.map((sess) => ( <a onClick={() => { setCurrentSession(sess)}} key={sess.uid} 
                   className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex flex-col items-start gap-2 border-b p-4 text-sm leading-tight whitespace-nowrap last:border-b-0" >
                   <div className="flex w-full items-center gap-2">
                     <span>{sess.name}</span>{" "}
-                    <span className="ml-auto text-xs">{sess.name}</span>
+                    <span className="ml-auto text-xs">{sess.uid}</span>
                   </div>
                   <span className="font-medium">{sess.icon}</span>
-                </Link>
+                </a>
                 ))}
               </SidebarGroupContent>
             </SidebarGroup>

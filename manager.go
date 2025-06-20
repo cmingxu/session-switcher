@@ -47,7 +47,7 @@ func (m *Manager) CreateSession() (*Session, error) {
 	randomUUID := uuid.NewString()[:8]
 	session := &Session{
 		Uid:     randomUUID,
-		Name:    "New Session",
+		Name:    "未命名1",
 		DataDir: filepath.Join(m.dataDir, "session", randomUUID),
 	}
 
